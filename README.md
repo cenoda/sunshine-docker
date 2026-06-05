@@ -85,7 +85,7 @@ sudo pacman -S pulseaudio
 ### One-Click Setup (Recommended)
 
 ```bash
-git clone <repo-url> sunshine-docker
+git clone https://github.com/cenoda/sunshine-docker.git
 cd sunshine-docker
 ./setup.sh
 ```
@@ -102,7 +102,7 @@ The script automatically:
 
 ```bash
 # 1. Clone
-git clone <repo-url> sunshine-docker
+git clone https://github.com/cenoda/sunshine-docker.git
 cd sunshine-docker
 
 # 2. Edit config (display, encoder, etc.)
