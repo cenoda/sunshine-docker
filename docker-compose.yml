@@ -1,10 +1,15 @@
 # Sunshine (Moonlight Game Streaming Server) - Docker Compose
-# NVIDIA GPU passthrough + X11 display capture
+# NVIDIA GPU passthrough + X11/Wayland display capture
 #
-# Quick Start:
+# Platform: Linux only (Ubuntu, Debian, Fedora, Arch, openSUSE)
+# Not compatible with Windows or macOS.
+#
+# Quick Start (X11):
 #   1. Edit sunshine.conf to match your setup
 #   2. docker-compose up -d
 #   3. Web UI: https://localhost:47990
+#
+# Wayland setup: see README.md for instructions
 #
 # Auto-start on boot:
 #   sudo cp sunshine-docker.service /etc/systemd/system/
@@ -27,8 +32,10 @@ services:
       - PULSE_COOKIE=/tmp/pulse-cookie
       - NVIDIA_DRIVER_CAPABILITIES=all
       - NVIDIA_VISIBLE_DEVICES=all
-      - TZ=${TZ:-Asia/Seoul}
+      - TZ=${TZ:-UTC}
       - XDG_RUNTIME_DIR=/tmp
+      # Wayland support (uncomment for Wayland sessions):
+      # - WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
 
     volumes:
       # Sunshine config directory (edit sunshine.conf here)
@@ -36,8 +43,15 @@ services:
       # X11 socket for display capture
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
       # PulseAudio for audio streaming
+      # Path may vary by distro. Common alternatives:
+      #   Fedora/Arch:  /run/user/1000/pulse/native
+      #   Ubuntu/Debian: /run/user/1000/pulse/native
       - ${XDG_RUNTIME_DIR:-/run/user/1000}/pulse/native:/tmp/pulse-native:ro
       - ${HOME}/.config/pulse/cookie:/tmp/pulse-cookie:ro
+      # Wayland socket for KMS capture (uncomment for Wayland):
+      # - ${XDG_RUNTIME_DIR:-/run/user/1000}/${WAYLAND_DISPLAY:-wayland-0}:/tmp/wayland-0:ro
+      # PipeWire socket for audio on Wayland (uncomment for Wayland):
+      # - ${XDG_RUNTIME_DIR:-/run/user/1000}/pipewire-0:/tmp/pipewire-0:ro
 
     devices:
       - /dev/dri:/dev/dri:rwm

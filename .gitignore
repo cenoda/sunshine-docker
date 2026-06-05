@@ -5,3 +5,6 @@ config/.config/
 
 # Credentials (contains SSL certs - keep private)
 config/credentials/
+
+# IDE
+.idea/

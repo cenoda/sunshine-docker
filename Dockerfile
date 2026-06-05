@@ -1,5 +1,6 @@
 # Custom Sunshine Docker image with X11 capture support and NVIDIA encoding
 # Extends lizardbyte/sunshine with missing runtime dependencies
+# Supports both X11 and Wayland capture
 
 FROM lizardbyte/sunshine:latest-ubuntu-24.04
 
@@ -8,6 +9,7 @@ USER root
 # Install X11 client libraries for display capture
 # Install Avahi for mDNS/Moonlight discovery
 # Install PulseAudio client for audio capture
+# Install Wayland + PipeWire client libs for Wayland capture support
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libxrandr2 \
@@ -27,6 +29,8 @@ RUN apt-get update && \
         libpulse0 \
         libssl3 \
         ca-certificates \
+        libwayland-client0 \
+        libpipewire-0.3-0 \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

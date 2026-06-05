@@ -8,10 +8,10 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/bin/docker-compose -f /home/cenoda/.config/sunshine/docker-compose.yml up -d
-ExecStop=/usr/bin/docker-compose -f /home/cenoda/.config/sunshine/docker-compose.yml down
-ExecReload=/usr/bin/docker-compose -f /home/cenoda/.config/sunshine/docker-compose.yml restart
-User=cenoda
+ExecStart=/usr/bin/docker-compose -f /opt/sunshine-docker/docker-compose.yml up -d
+ExecStop=/usr/bin/docker-compose -f /opt/sunshine-docker/docker-compose.yml down
+ExecReload=/usr/bin/docker-compose -f /opt/sunshine-docker/docker-compose.yml restart
+User=root
 Group=docker
 Restart=no
 
