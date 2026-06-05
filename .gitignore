@@ -1,0 +1,7 @@
+# Sunshine state files (generated at runtime)
+config/sunshine_state.json
+config/sunshine.log
+config/.config/
+
+# Credentials (contains SSL certs - keep private)
+config/credentials/

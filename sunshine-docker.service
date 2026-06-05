@@ -1,0 +1,19 @@
+[Unit]
+Description=Sunshine Game Streaming Server (Docker)
+Documentation=https://github.com/LizardByte/Sunshine
+After=docker.service network-online.target nvidia-persistenced.service
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/docker-compose -f /home/cenoda/.config/sunshine/docker-compose.yml up -d
+ExecStop=/usr/bin/docker-compose -f /home/cenoda/.config/sunshine/docker-compose.yml down
+ExecReload=/usr/bin/docker-compose -f /home/cenoda/.config/sunshine/docker-compose.yml restart
+User=cenoda
+Group=docker
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

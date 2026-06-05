@@ -1,0 +1,64 @@
+# Sunshine (Moonlight Game Streaming Server) - Docker Compose
+# NVIDIA GPU passthrough + X11 display capture
+#
+# Quick Start:
+#   1. Edit sunshine.conf to match your setup
+#   2. docker-compose up -d
+#   3. Web UI: https://localhost:47990
+#
+# Auto-start on boot:
+#   sudo cp sunshine-docker.service /etc/systemd/system/
+#   sudo systemctl enable --now sunshine-docker.service
+
+services:
+  sunshine:
+    build: .
+    image: sunshine-nvidia:latest
+    container_name: sunshine
+    restart: unless-stopped
+    network_mode: host
+
+    # Run as root for /dev/uinput and GPU access
+    user: "0:0"
+
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - PULSE_SERVER=unix:/tmp/pulse-native
+      - PULSE_COOKIE=/tmp/pulse-cookie
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - NVIDIA_VISIBLE_DEVICES=all
+      - TZ=${TZ:-Asia/Seoul}
+      - XDG_RUNTIME_DIR=/tmp
+
+    volumes:
+      # Sunshine config directory (edit sunshine.conf here)
+      - ./config:/home/lizard/.config/sunshine:rw
+      # X11 socket for display capture
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      # PulseAudio for audio streaming
+      - ${XDG_RUNTIME_DIR:-/run/user/1000}/pulse/native:/tmp/pulse-native:ro
+      - ${HOME}/.config/pulse/cookie:/tmp/pulse-cookie:ro
+
+    devices:
+      - /dev/dri:/dev/dri:rwm
+      - /dev/uinput:/dev/uinput:rwm
+      - /dev/uhid:/dev/uhid:rwm
+      - /dev/nvidia0:/dev/nvidia0:rwm
+      - /dev/nvidiactl:/dev/nvidiactl:rwm
+      - /dev/nvidia-modeset:/dev/nvidia-modeset:rwm
+      - /dev/input:/dev/input:rwm
+
+    device_cgroup_rules:
+      - 'c 13:* rmw'
+      - 'c 195:* rmw'
+
+    runtime: nvidia
+    privileged: true
+    pid: "host"
+    ipc: "host"
+
+    cap_add:
+      - SYS_NICE
+      - SYS_ADMIN
+      - SYS_PTRACE
+      - SYS_RAWIO
